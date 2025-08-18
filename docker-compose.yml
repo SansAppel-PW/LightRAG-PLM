@@ -1,0 +1,57 @@
+version: "3.8"
+services:
+  redis:
+    image: redis:8.0.3
+    ports: ["6379:6379"]
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: plm2.0
+    ports: ["5432:5432"]
+    volumes: ["./pgdata:/var/lib/postgresql/data"]
+  minio:
+    image: minio/minio
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000" # API端口
+      - "9001:9001" # 控制台端口
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volums: ["./minio-data:/data"]
+  elasticsearch:
+    image: elasticsearch:9.0.4
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - ELASTIC_PASSWORD=yourpassword
+    ports: ["9200:9200"]
+    volums: ["./esdata:/usr/share/elasticsearch/data"]
+  app:
+    build: . # 使用当前目录下的Dockerfile
+    depends_on:
+      - redis
+      - postgres
+      - minio
+      - elasticsearch
+    volumes:
+      - .:/app # 开发环境实时同步代码，可以挂载，但生产环境通常不需要
+    environment:
+      - redis_host=redis
+      - redis_port=6379
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=yourpassword
+      - POSTGRES_DB=mydatabase
+      - MINIO_ENDPOINT=minio:9000
+      - MINIO_ACCESS_KEY=minioadmin
+      - MINIO_SECRET_KEY=minioadmin
+      - MINIO_SECURE=False
+      - ELASTIC_HOST=elasticsearch
+      - ELASTIC_PORT=9200
+      - ELASTIC_USER=elastic
+      - ELASTIC_PASSWORD=yourpassword
+    ports:
+      - "8000:8000"

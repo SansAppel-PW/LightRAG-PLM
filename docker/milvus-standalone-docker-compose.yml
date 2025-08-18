@@ -1,0 +1,77 @@
+version: '3.5'
+
+services:
+  etcd:
+    container_name: hik-plm2.0-milvus-etcd
+    image: hb.hikvision.com.cn/coreos/etcd:v3.5.18
+    network_mode: host
+    environment:
+      - ETCD_AUTO_COMPACTION_MODE=revision
+      - ETCD_AUTO_COMPACTION_RETENTION=1000
+      - ETCD_QUOTA_BACKEND_BYTES=4294967296
+      - ETCD_SNAPSHOT_COUNT=50000
+    volumes:
+      - /mnt/ssd1/italgo_dev14/hzm/tool/docker/volume/milvus/milvus-etcd:/etcd
+    command: etcd -advertise-client-urls=http://localhost:9732 -listen-client-urls http://0.0.0.0:9732 --data-dir /etcd
+#    ports:
+#      - "9732:2379"   # 宿主机32379 → 容器23791（客户端通信）
+    healthcheck:
+      test: ["CMD", "etcdctl", "endpoint", "health"]
+#      test: ["CMD", "curl", "-f", "http://host.docker.internal:9732/health"]
+      interval: 30s
+      timeout: 50s
+      retries: 3
+      start_period: 50s
+
+  minio:
+    container_name: hik-plm2.0-milvus-minio
+    image: hb.hikvision.com.cn/minio/minio:RELEASE.2024-05-28T17-19-04Z
+    network_mode: host
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+#    ports:
+#      - "9801:9001"
+#      - "9800:9000"
+    volumes:
+      - /mnt/ssd1/italgo_dev14/hzm/tool/docker/volume/milvus/milvus-minio:/minio_data
+    command: minio server /minio_data --console-address ":9801" -address ":9800"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9800/minio/health/live"]
+      interval: 30s
+      timeout: 50s
+      retries: 3
+      start_period: 50s
+
+  standalone:
+    container_name: hik-plm2.0-milvus
+    image: hb.hikvision.com.cn/milvusdb/milvus:v2.5.14
+    command: ["milvus", "run", "standalone"]
+    network_mode: host
+    security_opt:
+      - seccomp:unconfined
+    environment:
+      MINIO_REGION: us-east-1
+      ETCD_ENDPOINTS: 0.0.0.0:9732
+      MINIO_ADDRESS: 0.0.0.0:9800
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    volumes:
+      - /mnt/ssd1/italgo_dev14/hzm/tool/docker/volume/milvus/milvus:/var/lib/milvus
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
+      interval: 100s
+      start_period: 100s
+      timeout: 100s
+      retries: 100
+#    ports:
+#      - "19053:19530"
+#      - "9910:9091"
+    depends_on:
+      - "etcd"
+      - "minio"
+
+#networks:
+#  driver: macvlan
+#  default:
+#    name: hik-plm2.0-milvus-networks

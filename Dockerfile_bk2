@@ -1,0 +1,45 @@
+# 使用官方 python 基础镜像
+FROM python:3.12.11-bullseye
+# 设置环境变量
+ENV PYTHONDONTWRITEBYTECODE 1
+ENV PYTHONUNBUFFERED 1
+ENV PIP_NO_CACHE_DIR off
+ENV PIP_DISABLE_PIP_VERSION_CHECK on
+
+# 安装系统依赖 - 包含构建工具和客户端库
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    -build-essential \
+    libpq-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装等待服务就绪的工具
+RUN curl -sSL https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh -o /usr/local/bin/wait-for-it \
+    && chmod +x /usr/local/bin/wait-for-it
+
+# 设置工作目录
+WORKDIR /app/PLM2.0
+
+# 先复制 requirements 文件以利用 Docker 缓存层
+COPY requirements.txt .
+
+# 复制应用代码
+COPY . .
+
+# 设置入口点脚本
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# 暴露端口（若需要）
+EXPOSE 8000
+
+# 设置健康检查（可选）
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8000/health || exit 1
+
+# 设置入口点
+ENTRYPOINT ["/entrypoint.sh"]
+
+RUN apk add --no-cache gcc musl-dev linux-headers
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt

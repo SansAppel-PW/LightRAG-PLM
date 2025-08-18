@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: hik-plm-postgres-with-age-pgvector
+    image: pg-age-vector-postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: postgres
+      POSTGRES_SHARED_PRELOAD_LIBRARIES: 'age'
+    ports:
+      - "2347:5432"
+    volumes:
+      - /mnt/ssd1/italgo_dev14/hzm/tool/docker/volume/postgres-with-age-pgvector:/mnt/ssd1/it
+#volumes:
+#  postgres_data:

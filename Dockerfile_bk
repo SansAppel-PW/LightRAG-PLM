@@ -1,0 +1,6 @@
+FROM python:3.12.11-bullseye
+WORKDIR /mnt/ssd1/italgo_dev14/hzm/code/Intelligent_QA/PLM2.0
+RUN apk add --no-cache gcc musl-dev linux-headers
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY . .

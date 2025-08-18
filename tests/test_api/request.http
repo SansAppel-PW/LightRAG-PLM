@@ -1,0 +1,8 @@
+###
+
+POST {{baseurl}}/qa
+content-type:application/json
+
+{
+    "question":"ninhao"
+}

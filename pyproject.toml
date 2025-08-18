@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plm 2.0"
+version = "2.0.1"
+description = " "
+authors = [{ name = "", email = "" }]
+license-files = ['LICENSE']
+reademe = "README.md"
+requires-python = '>=3.10,<3.13'
+dependencies = []
+
+[project.option-dependencies]
+
+[project.urls]
+homepage = "https://"
+documentation = "https://"
+repository = "https://"
+issues = "https://"
+
+[project.scripts]
+plm-upload = "plm.cli.files_upload:upload_files"
+plm-api = "plm.api.fast_api:main"
+plm-docx-parse = "plm.deepdoc.docx_parser:plm_docx_parse"
+
+[tool.setuptools]
+packages = [
+    'plm',
+]
+

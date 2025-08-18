@@ -1,0 +1,21 @@
+离线下载nltk_data，下载地址：https://github.com/nltk/nltk_data/tree/gh-pages
+
+下载nltk_data-gh-pages.zip后，解压，修改目录名称为 nltk_data，并将其存放在以下任意路径
+
+现在存放在'C:\\Users\\houzhimingwx1/nltk_data'
+
+Searched in:
+  - 'C:\\Users\\houzhimingwx1/nltk_data'
+  - 'C:\\Users\\houzhimingwx1\\Documents\\99-tool\\miniforge3\\envs\\hik-hzm-plm2\\nltk_data'
+  - 'C:\\Users\\houzhimingwx1\\Documents\\99-tool\\miniforge3\\envs\\hik-hzm-plm2\\share\\nltk_data'
+  - 'C:\\Users\\houzhimingwx1\\Documents\\99-tool\\miniforge3\\envs\\hik-hzm-plm2\\lib\\nltk_data'
+  - 'C:\\Users\\houzhimingwx1\\AppData\\Roaming\\nltk_data'
+  - 'C:\\nltk_data'
+  - 'D:\\nltk_data'
+  - 'E:\\nltk_data'
+
+
+离线下载存放到上述路径中的任意一个都可以。
+
+若之后还报错，路径中有.zip，需要将该.zip手动解压即可成功运行
+例如：C:\Users\houzhimingwx1\nltk_data\tokenizers\punkt.zip
