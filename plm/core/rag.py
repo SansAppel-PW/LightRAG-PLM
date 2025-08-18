@@ -63,7 +63,7 @@ async def rerank_model_func(
         query=query,
         documents=documents,
         model=llm_settings.HIK_MAAS_RERANKER.get_secret_value(),
-        base_url=llm_settings.HIK_MAAS_URL.get_secret_value(),
+        base_url=llm_settings.HIK_MAAS_RERANKER_URL.get_secret_value(), # HIK_MAAS_URL
         api_key=llm_settings.HIK_MAAS_KEY.get_secret_value(),
         top_n=top_n,
         **kwargs,

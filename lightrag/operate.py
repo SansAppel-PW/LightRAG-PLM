@@ -35,7 +35,7 @@ from .base import (
     TextChunkSchema,
     QueryParam,
 )
-from .prompt_ch import PROMPTS
+from .prompt import PROMPTS
 from .constants import (
     GRAPH_FIELD_SEP,
     DEFAULT_MAX_ENTITY_TOKENS,

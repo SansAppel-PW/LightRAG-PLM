@@ -36,7 +36,7 @@ def extract_images_from_xml(xml_str, doc_part, images_dir, image_references, con
         }
         
         root = etree.fromstring(xml_str)
-        
+        # image_idx = 1
         # 查找所有图片元素
         for blip in root.findall('.//a:blip', namespaces):
             embed_id = blip.get(f'{{{namespaces["r"]}}}embed')
@@ -71,6 +71,8 @@ def extract_images_from_xml(xml_str, doc_part, images_dir, image_references, con
             # 生成唯一图片ID
             image_id = f"img_{uuid.uuid4().hex[:8]}"
             img_filename = f"{image_id}.{img_format}"
+            # img_filename = f"image_{image_idx:02d}.{img_format}"
+            # image_idx += 1
             image_path = os.path.join(images_dir, img_filename)
             
             # 保存图片
@@ -84,6 +86,7 @@ def extract_images_from_xml(xml_str, doc_part, images_dir, image_references, con
             image_node = {
                 "type": "image",
                 "url": f"images/{img_filename}",
+                "path": image_path,
                 "format": img_format,
                 "width": width,
                 "height": height,

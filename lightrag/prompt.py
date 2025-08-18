@@ -20,6 +20,7 @@ PROMPTS["DEFAULT_ENTITY_TYPES"] = ["流程", "流程节点", "流程表达式",
                                    # "操作", "系统动作", "自动触发动作",
                                    # "角色", "参与者",
                                    ]
+PROMPTS["DEFAULT_USER_PROMPT"] = "n/a"
 
 PROMPTS["entity_extraction"] = """---目标---
 给定一段可能与当前任务相关的文本和一组实体类型，从文本中识别出所有属于这些类型的实体，以及这些实体之间的所有关系。

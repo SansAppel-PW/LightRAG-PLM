@@ -51,6 +51,11 @@ class RepSettings(BaseSettings):
     MINIO_ENDPOINT: SecretStr | None = None
     MINIO_ACCESSKEY: SecretStr | None = None
     MINIO_SECRETKEY: SecretStr | None = None
+    MINIO_BUCKET: str | None = None
+
+    MILVUS_URI: SecretStr | None = None
+    MILVUS_TOKEN: SecretStr | None = None
+    MILVUS_HOST: SecretStr | None = None
 
     # Redis配置
     REDIS_URL: RedisDsn | None = None
@@ -75,6 +80,7 @@ class LLMSettings(BaseSettings):
     HIK_MAAS_EMB: SecretStr | None = None
     HIK_MAAS_KEY: SecretStr | None = None
     HIK_MAAS_RERANKER: SecretStr | None = None
+    HIK_MAAS_RERANKER_URL: SecretStr | None = None
     HIK_MAAS_TIMEOUT: int = 100
     HIK_MAAS_TOKENIZER: SecretStr | None = None
     ENABLE_LLM_CACHE: bool = True
@@ -98,7 +104,7 @@ class RAGSettings(BaseSettings):
     EMBEDDING_DIM: int = 1024
     MAX_EMBED_TOKENS: int = 8192
     CHUNK_OVERLAP_SIZE: int = 20
-    COSINE_THRESHOLD: int = 20
+    COSINE_THRESHOLD: float = 0.2
 
     KV_STORAGE: str = 'PGKVStorage'
     GRAPH_STORAGE: str = 'PGGraphStorage'
@@ -115,6 +121,17 @@ class FileSettings(BaseSettings):
     FILE_SAVE_PATH: str | None = None
     FILE_PARSE_OUTPUT_PATH: str | None = None
 
+    model_config = SettingsConfigDict(  # SettingsConfigDict 替代了旧版本 Config 内部类
+        # env_file='.env.development', # 使用load_dotenv加载
+        env_prefix='',
+        env_file_encoding='utf-8',
+        extra='ignore',
+
+    )
+
+
+class UISettings(BaseSettings):
+    RAG_WEB_UI_PATH: str | None = None
     model_config = SettingsConfigDict(  # SettingsConfigDict 替代了旧版本 Config 内部类
         # env_file='.env.development', # 使用load_dotenv加载
         env_prefix='',
@@ -149,6 +166,11 @@ def get_file_settings():
     return FileSettings()
 
 
+@lru_cache
+def get_ui_settings():
+    return UISettings()
+
+
 # 默认从运行目录加载.env
 # 部署服务器时，将BASE_DIR去掉，从根路径执行 python plm/api/fast_api.py 会从项目路径下加载所有.env.*文件
 # BASE_DIR 只是为了在windows测试使用
@@ -164,6 +186,7 @@ rep_settings.sync_repo_sets_to_env()
 llm_settings = get_llm_settings()
 rag_settings = get_rag_settings()
 file_settings = get_file_settings()
+ui_settings = get_ui_settings()
 
 if __name__ == '__main__':
     print(get_app_settings())

@@ -45,6 +45,7 @@ def parse_table(table, table_idx, image_references, images_dir):
                     cell_node["content"].append({
                         "type": "image",
                         "url": img["url"],
+                        "path": img["path"],
                         "format": img["format"],
                         "width": img["width"],
                         "height": img["height"],

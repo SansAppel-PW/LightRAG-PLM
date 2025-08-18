@@ -619,56 +619,59 @@ class DocumentProcessor:
             return ""
 
     def _process_image(self, image_item: Dict[str, Any]) -> str:
+
         """
         处理图片，转换为标准化格式，使用绝对路径
         """
-        try:
-            # 从图片项中获取信息
-            image_path = image_item.get("path", "")
-            image_url = image_item.get("url", "")
-
-            # 生成绝对路径
-            if image_url:
-                # 使用url字段（这是主要的图片路径）
-                if os.path.isabs(image_url):
-                    abs_path = image_url
-                else:
-                    # 转换为绝对路径
-                    if self.output_dir:
-                        abs_path = os.path.abspath(os.path.join(self.output_dir, image_url))
-                    else:
-                        abs_path = os.path.abspath(image_url)
-                # image_info = f"![image]({abs_path})"
-                image_info = abs_path
-            elif image_path:
-                # 备用的path字段
-                if os.path.isabs(image_path):
-                    abs_path = image_path
-                else:
-                    # 转换为绝对路径
-                    if self.output_dir:
-                        abs_path = os.path.abspath(os.path.join(self.output_dir, image_path))
-                    else:
-                        abs_path = os.path.abspath(image_path)
-                # image_info = f"![image]({abs_path})"
-                image_info = abs_path
-            else:
-                self.image_counter += 1
-                # 生成默认图片的绝对路径
-                if self.output_dir:
-                    abs_path = os.path.abspath(
-                        os.path.join(self.output_dir, f"images/image_{self.image_counter:03d}.png"))
-                else:
-                    abs_path = os.path.abspath(f"./images/image_{self.image_counter:03d}.png")
-                # image_info = f"![image]({abs_path})"
-                image_info = abs_path
-
-            # 使用IMAGE标签包裹
-            return f"<|IMAGE|>{image_info}</|IMAGE|>"
-
-        except Exception as e:
-            logger.error(f"处理图片时发生错误: {e}")
-            return ""
+        image_path = image_item.get("path", "")
+        return f"<|IMAGE|>{image_path}</|IMAGE|>"
+        # try:
+        #     # 从图片项中获取信息
+        #     image_path = image_item.get("path", "")
+        #     image_url = image_item.get("url", "")
+        #
+        #     # 生成绝对路径
+        #     if image_url:
+        #         # 使用url字段（这是主要的图片路径）
+        #         if os.path.isabs(image_url):
+        #             abs_path = image_url
+        #         else:
+        #             # 转换为绝对路径
+        #             if self.output_dir:
+        #                 abs_path = os.path.abspath(os.path.join(self.output_dir, image_url))
+        #             else:
+        #                 abs_path = os.path.abspath(image_url)
+        #         # image_info = f"![image]({abs_path})"
+        #         image_info = abs_path
+        #     elif image_path:
+        #         # 备用的path字段
+        #         if os.path.isabs(image_path):
+        #             abs_path = image_path
+        #         else:
+        #             # 转换为绝对路径
+        #             if self.output_dir:
+        #                 abs_path = os.path.abspath(os.path.join(self.output_dir, image_path))
+        #             else:
+        #                 abs_path = os.path.abspath(image_path)
+        #         # image_info = f"![image]({abs_path})"
+        #         image_info = abs_path
+        #     else:
+        #         self.image_counter += 1
+        #         # 生成默认图片的绝对路径
+        #         if self.output_dir:
+        #             abs_path = os.path.abspath(
+        #                 os.path.join(self.output_dir, f"images/image_{self.image_counter:03d}.png"))
+        #         else:
+        #             abs_path = os.path.abspath(f"./images/image_{self.image_counter:03d}.png")
+        #         # image_info = f"![image]({abs_path})"
+        #         image_info = abs_path
+        #
+        #     # 使用IMAGE标签包裹
+        #     return f"<|IMAGE|>{image_info}</|IMAGE|>"
+        #
+        # except Exception as e:
+        #     logger.error(f"处理图片时发生错误: {e}")
+        #     return ""
 
     # ----------------- 新增辅助方法 -----------------
     def _iterate_merged_content(self, content: List[Dict[str, Any]]) -> Iterable[str]:
