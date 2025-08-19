@@ -1,5 +1,17 @@
-from contextlib import asynccontextmanager
+import sys
 from pathlib import Path
+
+# 获取当前文件的绝对路径
+current_file = Path(__file__).resolve()
+
+# 计算项目根目录路径（根据你的目录结构调整）
+# 假设项目根目录是当前文件的父目录的父目录（即 PLM2.0 文件夹）
+root_dir = current_file.parent.parent.parent
+print(root_dir)
+
+# 将项目根目录添加到系统路径
+sys.path.insert(0, str(root_dir))
+from contextlib import asynccontextmanager
 
 import click
 import uvicorn
@@ -48,6 +60,8 @@ def create_app():
     # Setup logging
     logger.level(app_settings.LOG_LEVEL)
     logger.info('---create-app---')
+    logger.info(f"llm_settings: {llm_settings}")
+    logger.info(f"HIK_MAAS_LLM: {llm_settings.HIK_MAAS_LLM}")
 
     rag = init_rag()
 
