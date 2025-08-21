@@ -68,9 +68,9 @@ class RepSettings(BaseSettings):
     )
 
     def sync_repo_sets_to_env(self):
-        os.environ['POSTGRES_USER'] = self.POSTGRES_USER.get_secret_value() if self.POSTGRES_USER else ""
-        os.environ['POSTGRES_PASSWORD'] = self.POSTGRES_PASSWORD.get_secret_value() if self.POSTGRES_PASSWORD else ""
-        os.environ['POSTGRES_DATABASE'] = self.POSTGRES_DATABASE.get_secret_value() if self.POSTGRES_DATABASE else ""
+        os.environ['POSTGRES_USER'] = self.POSTGRES_USER.get_secret_value() if self.POSTGRES_USER else None
+        os.environ['POSTGRES_PASSWORD'] = self.POSTGRES_PASSWORD.get_secret_value() if self.POSTGRES_PASSWORD else None
+        os.environ['POSTGRES_DATABASE'] = self.POSTGRES_DATABASE.get_secret_value() if self.POSTGRES_DATABASE else None
 
 
 class LLMSettings(BaseSettings):
@@ -174,10 +174,15 @@ def get_ui_settings():
 # 默认从运行目录加载.env
 # 部署服务器时，将BASE_DIR去掉，从根路径执行 python plm/api/fast_api.py 会从项目路径下加载所有.env.*文件
 # BASE_DIR 只是为了在windows测试使用
-BASE_DIR = r"C:/Users/hupeiwen6/Desktop/PLM2.0/"
+BASE_DIR = r"D:\Intelligent_QA\PLM2.0"
 load_dotenv(f'{BASE_DIR}.env', override=True, interpolate=True)  # 加载基础配置，包含ENVIRONMENT
 load_dotenv(f'{BASE_DIR}/.env.{os.getenv('ENVIRONMENT', 'development')}', override=True,
             interpolate=True)  # interpoldate 解决.env文件中使用${}引用上下文变量
+
+# staging环境
+# load_dotenv(f'.env', override=True, interpolate=True)  # 加载基础配置，包含ENVIRONMENT
+# load_dotenv(f'.env.{os.getenv('ENVIRONMENT', 'development')}', override=True,
+#             interpolate=True)  # interpoldate 解决.env文件中使用${}引用上下文变量
 
 # 必须放在load_dotenv下面，否则加载不到配置信息
 app_settings = get_app_settings()

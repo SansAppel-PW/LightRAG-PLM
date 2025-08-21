@@ -39,11 +39,13 @@ async def rag_query_and_answer(
     #                                         )
     # logger.info(f'RAG ainsert Response: {rag_ainsert_reponse}')
     rag_query_response = await rag.aquery(query=text, param=QueryParam(mode="naive"))
+    # rag_query_response = await rag.aquery(query=text, param=QueryParam(mode="hybrid"))
 
     logger.info(f"RAG QUERY RESPONSE: {rag_query_response}")
 
 
-    return RAGQAResponse(data={"answer":"您好，正在查询，请稍等..."})
+    # return RAGQAResponse(data={"answer":"您好，正在查询，请稍等..."})
+    return RAGQAResponse(data={"answer":rag_query_response})
 
 if __name__ == "__main__":
     asyncio.run(rag_query_and_answer(RAGQARequest(question="请问BOM是什么？")))

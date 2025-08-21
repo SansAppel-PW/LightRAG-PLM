@@ -3,22 +3,22 @@ requires = ["setuptools>=61.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "plm 2.0"
+name = "plm2rag"
 version = "2.0.1"
 description = " "
-authors = [{ name = "", email = "" }]
+#authors = [{ name = "", email = "" }]
 license-files = ['LICENSE']
-reademe = "README.md"
+#reademe = "README.md"
 requires-python = '>=3.10,<3.13'
-dependencies = []
+#dependencies = []
 
-[project.option-dependencies]
+#[project.option-dependencies]
 
 [project.urls]
-homepage = "https://"
-documentation = "https://"
-repository = "https://"
-issues = "https://"
+#homepage = "https://"
+#documentation = "https://"
+#repository = "https://"
+#issues = "https://"
 
 [project.scripts]
 plm-upload = "plm.cli.files_upload:upload_files"
@@ -28,5 +28,6 @@ plm-docx-parse = "plm.deepdoc.docx_parser:plm_docx_parse"
 [tool.setuptools]
 packages = [
     'plm',
+    'lightrag'
 ]
 

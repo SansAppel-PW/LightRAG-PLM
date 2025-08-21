@@ -43,11 +43,12 @@ def do_parse(doc_path: str):
             os.makedirs(output_dir, exist_ok=True)
             # 生成文件名
             ext = image.content_type.split('/')[-1]
-            image_abs_name = get_abs_image_name(doc_name, image_idx, ext)
+            cur_image_id = image_idx
+            image_abs_name = get_abs_image_name(doc_name, cur_image_id, ext)
             image_idx += 1
             with open(image_abs_name, "wb") as f:
                 f.write(image_bytes.read())
-            return {"src": get_rel_image_name(doc_name, image_idx, ext)}
+            return {"src": get_rel_image_name(doc_name, cur_image_id, ext)}
 
     with open(doc_path, "rb") as docx_file:
         result = mammoth.convert_to_html(

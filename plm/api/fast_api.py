@@ -1,17 +1,15 @@
-import sys
-from pathlib import Path
+'''
+Author: Jerry Hu
+Date: 2025-08-21 10:00:05
+LastEditors: Jerry Hu
+LastEditTime: 2025-08-21 10:17:07
+FilePath: \Intelligent_QA\PLM2.0\plm\api\fast_api.py
+Description: 个人联系方式：1548814695@qq.com
 
-# 获取当前文件的绝对路径
-current_file = Path(__file__).resolve()
-
-# 计算项目根目录路径（根据你的目录结构调整）
-# 假设项目根目录是当前文件的父目录的父目录（即 PLM2.0 文件夹）
-root_dir = current_file.parent.parent.parent
-print(root_dir)
-
-# 将项目根目录添加到系统路径
-sys.path.insert(0, str(root_dir))
+Copyright (c) 2025 by ${git_name_email}, All Rights Reserved. 
+'''
 from contextlib import asynccontextmanager
+from pathlib import Path
 
 import click
 import uvicorn
@@ -60,8 +58,6 @@ def create_app():
     # Setup logging
     logger.level(app_settings.LOG_LEVEL)
     logger.info('---create-app---')
-    logger.info(f"llm_settings: {llm_settings}")
-    logger.info(f"HIK_MAAS_LLM: {llm_settings.HIK_MAAS_LLM}")
 
     rag = init_rag()
 
@@ -70,7 +66,7 @@ def create_app():
         """Lifespan context manager for startup and shutdown events"""
         # Store background tasks
         app.state.background_tasks = set()
-        app.state.rag=rag
+        # app.state.rag=rag
 
         try:
             # Initialize database connections
@@ -179,13 +175,12 @@ app.add_exception_handler(RequestValidationError, validation_exception_handler) 
 
 
 
-async def get_rag():
-    return app.state.rag
-
 @click.command(context_settings=dict(ignore_unknown_options=True, allow_extra_args=True))
 @click.pass_context
 @click.option('--host', default='127.0.0.1', help='Server host (default: 127.0.0.1)')
 @click.option('--port', default=8000, type=int, help='Server port (default: 8000)')
+# @click.option('--host', default='localhost', help='Server host (default: 127.0.0.1)')
+# @click.option('--port', default=8001, type=int, help='Server port (default: 8000)')
 @click.option('--reload', is_flag=True, help='Enable auto-reload (development mode)')
 @click.option('--env', default='development', help='Environment (default: development)')
 def main(ctx, host, port, reload, **kwargs):
@@ -214,10 +209,10 @@ def main(ctx, host, port, reload, **kwargs):
     # """
 
     """启动 PLM2.0 FastAPI 服务器的命令行入口"""  # MinerU
-    logger.info(f"Start PLM2.0 FastAPI Service: http://{host}:{port}")
+    logger.info(f"Start PLM2.0 FastAPI Service: http://{app_settings.SERVER_HOST}:{app_settings.SERVER_PORT}")
     logger.info("The API documentation can be accessed at the following address:")
-    logger.info(f"- Swagger UI: http://{host}:{port}/docs")
-    logger.info(f"- ReDoc: http://{host}:{port}/redoc")
+    logger.info(f"- Swagger UI: http://{app_settings.SERVER_HOST}:{app_settings.SERVER_PORT}/docs")
+    logger.info(f"- ReDoc: http://{app_settings.SERVER_HOST}:{app_settings.SERVER_PORT}/redoc")
 
     uvicorn.run(
         "plm.api.fast_api:app",

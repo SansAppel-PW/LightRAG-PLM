@@ -2,7 +2,8 @@ from loguru import logger
 from transformers import AutoTokenizer
 
 from lightrag import LightRAG
-from lightrag.chunk import custom_chunking
+# from lightrag.chunk import custom_chunking
+from plm.deepdoc.html2chunk import custom_chunking
 from lightrag.llm.openai import openai_complete_if_cache, openai_embed
 from lightrag.rerank import custom_rerank
 from lightrag.types import GPTKeywordExtractionFormat

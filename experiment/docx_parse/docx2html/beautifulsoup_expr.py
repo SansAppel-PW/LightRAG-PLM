@@ -11,3 +11,13 @@ with open(html_path, 'rb') as f:
 soup = BeautifulSoup(html_content, "html.parser")
 
 print(soup)
+
+all_h1 = soup.find_all('h1')
+print(len(all_h1))
+
+print(all_h1[2])
+
+print('------------------------------------')
+# 使用BeautifulSoup解析HTML
+soup = BeautifulSoup(html_content, "lxml")
+print(soup.body)

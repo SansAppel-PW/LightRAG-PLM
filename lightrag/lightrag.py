@@ -44,6 +44,7 @@ from lightrag.kg.shared_storage import (
     get_pipeline_status_lock,
     get_graph_db_lock,
 )
+from plm.deepdoc.html2chunk import custom_chunking
 
 from .base import (
     BaseGraphStorage,
@@ -211,9 +212,10 @@ class LightRAG:
             bool,
             int,
             int,
+            str
         ],
         List[Dict[str, Any]],
-    ] = field(default_factory=lambda: chunking_by_token_size)
+    ] = field(default_factory=lambda: custom_chunking)
     """
     Custom chunking function for splitting text into chunks before processing.
 
@@ -225,6 +227,7 @@ class LightRAG:
         - `split_by_character_only`: If True, the text is split only on the specified character.
         - `chunk_token_size`: The maximum number of tokens per chunk.
         - `chunk_overlap_token_size`: The number of overlapping tokens between consecutive chunks.
+        - 'file_path'
 
     The function should return a list of dictionaries, where each dictionary contains the following keys:
         - `tokens`: The number of tokens in the chunk.
@@ -1021,6 +1024,7 @@ class LightRAG:
                                     split_by_character_only,
                                     self.chunk_overlap_token_size,
                                     self.chunk_token_size,
+                                    file_path,
                                 )
                             }
 

@@ -162,10 +162,10 @@ def plm_docx_parse(cxt,
             # if doc_path.suffix in doc_suffixes + image_suffixes:
             if doc_path.suffix in doc_suffixes:
                 doc_path_list.append(doc_path)
-        do_parse(Path(output_dir).as_posix(), doc_path_list)
+        return do_parse(Path(output_dir).as_posix(), doc_path_list)
     else:
         docx_path = Path(input_path).as_posix()
-        do_parse(Path(output_dir).as_posix(), [Path(docx_path)])
+        return do_parse(Path(output_dir).as_posix(), [Path(docx_path)])
 
 
 def do_parse(output_dir,
@@ -187,6 +187,7 @@ def do_parse(output_dir,
     failed_files = []
     # skipped_files = []
     processed_count = 0
+    processed_texts = []
     for file_path in docx_file_paths:
         # 从文件名提取文档名称
         # doc_name = safe_filename(file_path.stem) # 考虑需要用文件名加载解析结果，所以使用原始文件名
@@ -204,6 +205,7 @@ def do_parse(output_dir,
 
             # 处理为标准化文本格式
             processed_text = process_document_to_text(document_structure, doc_name)
+            processed_texts.append(processed_text)
 
             # 保存处理后的文本
             text_path = local_md_output_dir / "processed_text.txt"
@@ -211,7 +213,7 @@ def do_parse(output_dir,
                 f.write(processed_text)
 
             # 上传图片并将图片信息保存到Minio
-            upload_images(doc_name, processed_text)
+            upload_images(doc_name, processed_text, text_path)
 
             # 统计信息
             total_images = len(document_structure.get("images", {}))
@@ -271,30 +273,27 @@ def do_parse(output_dir,
         # 打印处理结果
         logger.info(f"批量处理完成!")
         logger.info(f"成功处理: {processed_count}/{len(docx_file_paths)} 个文件 ({processed_count / len(docx_file_paths) * 100:.1f}%)")
+        return processed_texts
 
-def upload_images(doc_name, text):
+def upload_images(doc_name, text, text_path):
 
-
-
-    images_path_list = re.findall(r"<Image[^>]*>(.*?)</Image>", text, re.DOTALL)
+    images_path_list = re.findall(r"<\|IMAGE\|[^>]*>(.*?)</\|IMAGE\|>", text, re.DOTALL)
     logger.info(f'images: {images_path_list}')
 
-    minio_object_names = []
-    for image_idx, image_path in enumerate(images_path_list):
-        # upload minio
+    text_replaced = text
+    for image_idx, image_loal_path in enumerate(images_path_list, 1):
         # upload to minio
-        image_path = Path(image_path)
-        minio_object_name = f"{doc_name}/{image_idx}.{image_path.suffix}"
-        # with open(image_path, 'rb') as file:
-        #     image_bytes = file.read()
-        # f_stream = io.BytesIO(image_bytes)
-        # f_stream.seek(0)
+        image_loal_path = Path(image_loal_path)
+        minio_object_name = f"{doc_name}/{image_idx:02d}{image_loal_path.suffix}"
         minio_client = PLMMinio()
         minio_client.fput(bucket=rep_settings.MINIO_BUCKET, file_name=minio_object_name,
-                                   file_path=str(image_path))
-        logger.info(f'MINIO IMAGE UPLOAD: {image_path}')
-        minio_object_names.append(minio_object_name)
-
+                                   file_path=str(image_loal_path))
+        logger.info(f'MINIO IMAGE UPLOAD: {image_loal_path}, MINIO OBJECT NAME: {minio_object_name}')
+        text_replaced = text_replaced.replace(f"<|IMAGE|>{image_loal_path}</|IMAGE|>", f"<|IMAGE|>{minio_object_name}</|IMAGE|>")
+    save_replaced_text = Path(Path(text_path).parent) / 'docx_text.txt'
+    with open(save_replaced_text, 'w', encoding="utf-8") as f:
+        f.write(text_replaced)
+    logger.info(f'Replaced image local path with minio object name...')
 
 
 if __name__ == "__main__":

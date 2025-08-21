@@ -23,3 +23,4 @@ class RAGQAResponse(BaseModel):
 class UploadResponse(BaseModel):
     code: int = status.HTTP_200_OK
     message: str = "SUCCESS"
+
